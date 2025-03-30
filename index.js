@@ -16,37 +16,33 @@ app.get("/", function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
 
-app.get("/api/", function (req, res) {
-    const date = new Date();
-
-
-    if (!isNaN(date.getTime())) { 
-        const unix = date.getTime();
-        const utc = date.toUTCString();
-        res.json({ unix, utc });
-    } else {
-        res.json({ error: 'Invalid Date' });
-    }
-});
 
 app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
-app.get("/api/:date", function (req, res) {
-    const date = new Date(req.params.date);
+app.get("/api/:date?", function (req, res) {
+    let date;
 
-    if(req.params.date.length === 0){
+    if(!req.params.date){
         date = new Date();
+    }else{
+        if (!isNaN(req.params.date)) {
+            date = new Date(parseInt(req.params.date))
+        } else {
+            date = new Date(req.params.date)
+        }
     }
 
-    if (!isNaN(date.getTime())) { 
+    if(date.toString() === 'Invalid Date'){
+        res.json({ error: date.toString() });
+    }
+    else{
         const unix = date.getTime();
         const utc = date.toUTCString();
         res.json({ unix, utc });
-    } else {
-        res.json({ error: 'Invalid Date' });
     }
+
 });
 
 
